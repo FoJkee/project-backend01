@@ -16,7 +16,7 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "dev": "yarn nodemon --inspect dist/index.js",
-    "watch": "yarn tsc -w"
+    "dev": "nodemon --inspect dist/index.js",
+    "watch": "tsc -w"
   }
 }
