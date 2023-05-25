@@ -1,8 +1,16 @@
 import express, {Request, Response} from 'express'
-import {availableParallelism} from "os";
+import bodyParser from "body-parser";
+import {videosRouter} from "./router/videos-router";
+import {testingRouter} from "./router/testing-router";
 
 const app = express()
-const port = 3008
+const port = process.env.PORT || 4000
+
+
+
+const parserMiddleware = bodyParser({})
+app.use(parserMiddleware)
+
 
 export const http_statuses = {
     OK_200: 200,
@@ -19,99 +27,30 @@ type videoType = {
     title: string,
     author: string,
     canBeDownloaded: boolean,
-    minAgeRestriction: null,
-    createdAt: Date,
-    publicationDate: Date,
+    minAgeRestriction: null | number,
+    createdAt: string,
+    publicationDate: string,
     availableResolutions: string[]
 }
 
-const videos: { bd: videoType[] } = {
-        bd: [{
-            id: 0,
-            title: "string",
-            author: "string",
-            canBeDownloaded: false,
-            minAgeRestriction: null,
-            createdAt: new Date(),
-            publicationDate: new Date(),
-            availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-        }
-        ]
+
+/// Данные вводим сами эти?
+const videos: videoType[] = [
+    {
+        id: 0,
+        title: '',
+        author: '',
+        canBeDownloaded: false,
+        minAgeRestriction: null,
+        createdAt: new Date().toISOString(),
+        publicationDate: new Date().toISOString(),
+        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     }
-
-app.delete('/testing/all-data', (req: Request, res: Response) => {
-    videos.bd = []
-    res.sendStatus(http_statuses.No_Content_204)
-})
-
-app.get('/videos', (req: Request, res: Response) => {
-    const videoGet = videos.bd
-    if (videoGet) {
-        res.send(videoGet).sendStatus(http_statuses.OK_200)
-        return
-    }
-    res.sendStatus(http_statuses.Not_Found_404)
-})
+]
 
 
-app.get('/videos/:id', (req: Request, res: Response) => {
-    const videosGetId = videos.bd.find(p => p.id === +req.params.id)
-    if (!videosGetId) {
-        res.sendStatus(http_statuses.Not_Found_404)
-        return
-    }
-    res.send(videosGetId)
-})
-
-app.delete('/videos/:id', (req: Request, res: Response) => {
-    const videosDeleteId = videos.bd.filter(c => c.id !== +req.params.id)
-    if (!videosDeleteId) {
-        res.send('Not Found').status(404)
-        return
-    }
-    res.send(videosDeleteId).status(204)
-})
-//
-// app.put('/videos/:id', (req: Request, res: Response) => {
-//     if (!req.body.title) {
-//         res.send({
-//             errorsMessages: [
-//                 {
-//                     "message": "string",
-//                     "field": "string"
-//                 }
-//             ]
-//         })
-//             .status(400)
-//         return;
-//     }
-//     const videoPut = videos.find(p => p.id === +req.params.id)
-//     if (!videoPut) {
-//         res.send('Not Found')
-//             .status(404)
-//         return
-//     }
-//     videoPut.title = req.body.title
-//     res.send('No Content').status(204)
-// })
-//
-app.post('/videos', (req: Request, res: Response) => {
-    const videoPost: any = {
-        title: req.body.title,
-        author: req.body.author,
-        availableResolutions: req.body.availableResolutions[0]
-    }
-videos.bd.push(videoPost)
-res.sendStatus(http_statuses.Created_201)
-
-
-
-
-
-
-
-})
-
+app.use('/videos', videosRouter)
+app.use('/testing', testingRouter)
 
 
 
