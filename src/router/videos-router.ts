@@ -16,11 +16,7 @@ type videoType = {
 
 const videos: videoType[] = []
 videosRouter.get('/', (req: Request, res: Response) => {
-    if (videos) {
         res.send(videos).sendStatus(http_statuses.OK_200)
-        return
-    }
-    res.sendStatus(http_statuses.Not_Found_404)
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(p => p.id === +req.params.id)
@@ -28,7 +24,7 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
         res.sendStatus(http_statuses.Not_Found_404)
         return
     }
-    res.send(videosGetId)
+    res.send(videosGetId).sendStatus(http_statuses.OK_200)
 })
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)

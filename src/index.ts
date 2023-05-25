@@ -7,6 +7,7 @@ const app = express()
 const port = process.env.PORT || 4000
 
 const parserMiddleware = bodyParser({})
+
 app.use(parserMiddleware)
 
 export const http_statuses = {
@@ -17,9 +18,6 @@ export const http_statuses = {
     Not_Found_404: 404,
 }
 
-
-
-/// Данные вводим сами эти?
 
 app.use('/videos', videosRouter)
 app.use('/testing', testingRouter)
