@@ -11,11 +11,9 @@ type videoType = {
     publicationDate: string,
     availableResolutions: string[]
 }
-const videos: videoType[] = [
-
-]
+const videos: videoType[] = []
 export const testingRouter = Router({})
 testingRouter.delete('/all-data', (req: Request, res: Response) => {
-    const deleteAll: videoType[] = []
-    res.send(deleteAll).sendStatus(http_statuses.No_Content_204)
+    videos.splice(0)
+    res.send(videos).sendStatus(http_statuses.No_Content_204)
 })

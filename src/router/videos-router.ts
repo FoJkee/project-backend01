@@ -14,9 +14,7 @@ type videoType = {
     availableResolutions: string[]
 }
 
-const videos: videoType[] = [
-
-]
+const videos: videoType[] = []
 videosRouter.get('/', (req: Request, res: Response) => {
     if (videos) {
         res.send(videos).sendStatus(http_statuses.OK_200)

@@ -25,13 +25,6 @@ export const http_statuses = {
 app.use('/videos', videosRouter)
 app.use('/testing', testingRouter)
 
-
-
-
-
-
-
-
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
