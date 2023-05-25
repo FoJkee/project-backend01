@@ -12,16 +12,7 @@ type videoType = {
     availableResolutions: string[]
 }
 const videos: videoType[] = [
-    {
-        id: 0,
-        title: '',
-        author: '',
-        canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
-        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-    }
+
 ]
 export const testingRouter = Router({})
 testingRouter.delete('/all-data', (req: Request, res: Response) => {
