@@ -1,4 +1,4 @@
-import express, {Request, Response} from 'express'
+import express from 'express'
 import bodyParser from "body-parser";
 import {videosRouter} from "./router/videos-router";
 import {testingRouter} from "./router/testing-router";
@@ -15,7 +15,6 @@ export const http_statuses = {
     No_Content_204: 204,
     Bad_Request_400: 400,
     Not_Found_404: 404,
-
 }
 
 
