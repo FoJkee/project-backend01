@@ -1,17 +1,18 @@
 import {Request, Response, Router} from "express";
 import {http_statuses} from "../index";
 
-type videoType = {
-    id: number,
-    title: string,
-    author: string,
-    canBeDownloaded: boolean,
-    minAgeRestriction: null | number,
-    createdAt: string,
-    publicationDate: string,
-    availableResolutions: string[]
-}
-const videos: videoType[] = []
+const videos: videoType[] = [
+    {
+        id: 0,
+        title: "string",
+        author: "string",
+        canBeDownloaded: false,
+        minAgeRestriction: 12,
+        createdAt: new Date().toISOString(),
+        publicationDate: "2023-05-26T08:23:49.964Z",
+        availableResolutions: ["P144"]
+    }
+]
 export const testingRouter = Router()
 testingRouter.delete('/all-data', (req: Request, res: Response) => {
     videos.splice(0)
