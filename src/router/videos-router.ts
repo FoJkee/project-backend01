@@ -36,17 +36,18 @@ videosRouter.post('/', (req: Request, res: Response) => {
             message: "Incorrect title",
             field: "title"
         })
+        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
+
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         errorsMessages.push({
             message: "Incorrect author",
             field: "author"
         })
-    }
-    if (errorsMessages.length > 0) {
         res.status(400).send(errorsMessages)
         return
     }
+
     const dateNow = new Date()
 
     const newVideo: VideoType = {
@@ -82,12 +83,16 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
             message: "Incorrect title",
             field: "title"
         })
+        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
+
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         errorsMessages.push({
             message: "Incorrect author",
             field: "author"
         })
+        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
+
     }
     if (!(typeof (minAgeRestriction) === "number") ||
         minAgeRestriction < 1 || minAgeRestriction > 18 ||
@@ -97,13 +102,14 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
             message: "Incorrect age",
             field: "age"
         })
+        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
+
     }
 
     if (errorsMessages.length > 0) {
         res.status(http_statuses.Bad_Request_400).send(errorsMessages)
         return
     }
-
 
     const dateNow = new Date()
 
