@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express";
 import {http_statuses} from "../index";
-import {ErrorType, VideoType} from "../types";
+import {VideoType} from "../types";
 
 export const videosRouter = Router()
 
@@ -32,30 +32,21 @@ videosRouter.post('/', (req: Request, res: Response) => {
     const errorsMessages = []
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        errorsMessages.push(
-            {
-                errorsMessages: [
-                    {
-                        message: "Incorrect title",
-                        field: "title"
-                    }
-                ]
-            }
-        )
-        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
+        errorsMessages.push({
+                errorsMessages: [{
+                        "message": "Incorrect title",
+                        "field": "title"
+                    }]
+            })
 
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        errorsMessages.push(
-            {
-                errorsMessages: [
-                    {
-                        message: "Incorrect author",
-                        field: "author"
-                    }
-                ]
-            }
-        )
+        errorsMessages.push({
+                errorsMessages: [{
+                        "message": "Incorrect author",
+                        "field": "author"
+                    }]
+            })
 
     }
 
@@ -96,23 +87,19 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         errorsMessages.push({
-            errorsMessages: [
-                {
-                    message: "Incorrect title",
-                    field: "title"
-                }
-            ]
+            errorsMessages: [{
+                    "message": "Incorrect title",
+                    "field": "title"
+                }]
         })
 
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         errorsMessages.push({
-            errorsMessages: [
-                {
-                    message: "Incorrect author",
-                    field: "author"
-                }
-            ]
+            errorsMessages: [{
+                    "message": "Incorrect author",
+                    "field": "author"
+                }]
         })
 
     }
@@ -121,16 +108,14 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         !minAgeRestriction) {
 
         errorsMessages.push({
-            errorsMessages: [
-                {
-                    message: "Incorrect minAgeRestriction",
-                    field: "minAgeRestriction"
-                }
-            ]
+            errorsMessages: [{
+                    "message": "Incorrect minAgeRestriction",
+                    "field": "minAgeRestriction"
+                }]
         })
     }
 
-    if (errorsMessages.length > 0 || errorsMessages === undefined) {
+    if (errorsMessages.length > 0 && errorsMessages === undefined) {
         res.status(http_statuses.Bad_Request_400).send(errorsMessages)
         return
     }

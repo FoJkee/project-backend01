@@ -12,7 +12,6 @@ export type VideoType = {
 }
 
 export type ErrorType = {
-
     message: string,
     field: string
 }
