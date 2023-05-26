@@ -20,7 +20,7 @@ export const videos: VideoType[] = [
         minAgeRestriction: 12,
         createdAt: initDate.toISOString(),
         publicationDate: getNextDayDate(initDate).toISOString(),
-        availableResolutions: ["P144"]
+        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     }
 ]
 videosRouter.get('/', (req: Request, res: Response) => {
@@ -126,8 +126,6 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
 
     res.status((http_statuses.No_Content_204))
 })
-
-
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
