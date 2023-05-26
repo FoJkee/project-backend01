@@ -135,7 +135,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
-    if (!videosDeleteId) {
+    if (videosDeleteId) {
         res.status(http_statuses.Not_Found_404)
     } else {
         res.status(http_statuses.No_Content_204).send(videosDeleteId)
