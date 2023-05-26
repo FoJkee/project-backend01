@@ -12,7 +12,7 @@ type videoType = {
     availableResolutions: string[]
 }
 const videos: videoType[] = []
-export const testingRouter = Router({})
+export const testingRouter = Router()
 testingRouter.delete('/all-data', (req: Request, res: Response) => {
     videos.splice(0)
     res.send(videos).sendStatus(http_statuses.No_Content_204)

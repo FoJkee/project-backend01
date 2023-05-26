@@ -1,7 +1,7 @@
 import {Request, Response, Router} from "express";
 import {http_statuses} from "../index";
 
-export const videosRouter = Router({})
+export const videosRouter = Router()
 
 type videoType = {
     id: number,
@@ -14,7 +14,18 @@ type videoType = {
     availableResolutions: string[]
 }
 
-const videos: videoType[] = []
+const videos: videoType[] = [
+    {
+        id: 0,
+        title: "string",
+        author: "string",
+        canBeDownloaded: false,
+        minAgeRestriction: 12,
+        createdAt: "2023-05-26T08:23:49.964Z",
+        publicationDate: "2023-05-26T08:23:49.964Z",
+        availableResolutions: ["P144"]
+    }
+]
 videosRouter.get('/', (req: Request, res: Response) => {
         res.send(videos).sendStatus(http_statuses.OK_200)
 })
@@ -24,15 +35,16 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
         res.sendStatus(http_statuses.Not_Found_404)
         return
     }
-    res.send(videosGetId).sendStatus(http_statuses.OK_200)
+        res.send(videosGetId).sendStatus(http_statuses.OK_200)
 })
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
     if (!videosDeleteId) {
         res.sendStatus(http_statuses.Not_Found_404)
         return
+    } else {
+        res.send(videosDeleteId).sendStatus(http_statuses.No_Content_204)
     }
-    res.send(videosDeleteId).sendStatus(http_statuses.No_Content_204)
 })
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
@@ -117,7 +129,6 @@ videosRouter.post('/', (req: Request, res: Response) => {
         return
     }
 
-    /// Данные вводим сами эти?
 
     const createdAt = new Date()
     const publicationDate = new Date()

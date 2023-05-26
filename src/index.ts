@@ -1,4 +1,4 @@
-import express from 'express'
+import express, {Request, Response} from 'express'
 import bodyParser from "body-parser";
 import {videosRouter} from "./router/videos-router";
 import {testingRouter} from "./router/testing-router";
@@ -17,7 +17,9 @@ export const http_statuses = {
     Bad_Request_400: 400,
     Not_Found_404: 404,
 }
-
+app.get('/', (req: Request, res: Response) => {
+    res.send('Hey').sendStatus(http_statuses.OK_200)
+})
 
 app.use('/videos', videosRouter)
 app.use('/testing', testingRouter)
