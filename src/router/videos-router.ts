@@ -1,141 +1,139 @@
 import {Request, Response, Router} from "express";
 import {http_statuses} from "../index";
+import {ErrorType, VideoType} from "../types";
 
 export const videosRouter = Router()
 
+const getNextDayDate = (dateNow: Date): Date => {
+    const nextDay = new Date()
+    return new Date(nextDay.setDate(dateNow.getDate() + 1))
+}
 
-const createdAt = new Date()
-const publicationDate = new Date()
-publicationDate.setDate(createdAt.getDate() + 1)
+const initDate = new Date()
 
-const videos: videoType[] = [
+export const videos: VideoType[] = [
     {
         id: 0,
-        title: "string",
-        author: "string",
+        title: "any string",
+        author: "any string",
         canBeDownloaded: false,
         minAgeRestriction: 12,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
+        createdAt: initDate.toISOString(),
+        publicationDate: getNextDayDate(initDate).toISOString(),
         availableResolutions: ["P144"]
     }
 ]
 videosRouter.get('/', (req: Request, res: Response) => {
-        res.send(videos).sendStatus(http_statuses.OK_200)
+    res.status(http_statuses.OK_200).send(videos)
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
-    const videoPost:any = {
-        id: +(new Date()),
-        title: req.body.title,
-        author:req.body.author,
-    }
+    const {title, author, availableResolutions} = req.body
+    const errorsMessages: ErrorType[] = []
 
-    if (!req.body.title || !(req.body.title.length <= 40) || !(typeof (req.body.title) === 'string')) {
-        res.send({
-                errorsMessages: [
-                    {
-                        message: "Correct title",
-                        field: 'title'
-                    }
-                ]
-            }
-        ).sendStatus(http_statuses.Bad_Request_400)
+    if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
+        errorsMessages.push({
+            message: "Incorrect title",
+            field: "title"
+        })
+    }
+    if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
+        errorsMessages.push({
+            message: "Incorrect author",
+            field: "author"
+        })
+    }
+    if (errorsMessages.length > 0) {
+        res.status(400).send(errorsMessages)
         return
     }
-        videos.push(videoPost)
-        res.json(201)
+    const dateNow = new Date()
 
-    if (!req.body.author || !(req.body.author.length <= 20) || !(typeof (req.body.author) === 'string')) {
-        res.send({
-                errorsMessages: [
-                    {
-                        message: "Correct author",
-                        field: 'author'
-                    }
-                ]
-            }).sendStatus(http_statuses.Bad_Request_400)
-        return
+    const newVideo: VideoType = {
+        id: +dateNow,
+        title: title,
+        author: author,
+        canBeDownloaded: false,
+        minAgeRestriction: null,
+        createdAt: dateNow.toISOString(),
+        publicationDate: getNextDayDate(dateNow).toISOString(),
+        availableResolutions: availableResolutions
     }
-    videos.push(videoPost)
-    res.json(201)
-
-
+    videos.push(newVideo)
+    res.status(http_statuses.Created_201)
 
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(p => p.id === +req.params.id)
     if (!videosGetId) {
-        res.sendStatus(http_statuses.Not_Found_404)
+        res.status(http_statuses.Not_Found_404)
         return
     }
-        res.json(videosGetId).sendStatus(http_statuses.OK_200)
+    res.status(http_statuses.OK_200).send(videosGetId)
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
+    const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
+    const errorsMessages: ErrorType[] = []
 
-    const videoPut = videos.find(p => p.id === +req.params.id)
-    if (!videoPut) {
-        res.status(404)
-        return
+
+    if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
+        errorsMessages.push({
+            message: "Incorrect title",
+            field: "title"
+        })
     }
-    if (!req.body.title || !(req.body.title.length <= 40) || !(typeof (req.body.title) === 'string')) {
-        res.send({
-                errorsMessages: [
-                    {
-                        message: "Correct title",
-                        field: 'title'
-                    }
-                ]
-            }
-        ).sendStatus(http_statuses.Bad_Request_400)
-        return
+    if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
+        errorsMessages.push({
+            message: "Incorrect author",
+            field: "author"
+        })
     }
-    if (!req.body.author || !(req.body.author.length <= 20) || !(typeof (req.body.author) === 'string')) {
-        res.send({
-                errorsMessages: [
-                    {
-                        message: "Correct author",
-                        field: 'author'
-                    }
-                ]
-            }
-        ).sendStatus(http_statuses.Bad_Request_400)
-        return
+    if (!(typeof (minAgeRestriction) === "number") ||
+        minAgeRestriction < 1 || minAgeRestriction > 18 ||
+        !minAgeRestriction) {
+
+        errorsMessages.push({
+            message: "Incorrect age",
+            field: "age"
+        })
     }
-    if (req.body.minAgeRestriction < 1 && req.body.minAgeRestriction > 18) {
-        res.send({
-                errorsMessages: [
-                    {
-                        message: "Correct age",
-                        field: 'Age'
-                    }
-                ]
-            }
-        ).sendStatus(http_statuses.Bad_Request_400)
+
+    if (errorsMessages.length > 0) {
+        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
         return
     }
 
-    if (videoPut) {
-        videoPut.title = req.body.title
-        videoPut.author = req.body.author
-        videoPut.availableResolutions = req.body.availableResolutions
-        videoPut.canBeDownloaded = req.body.canBeDownloaded
-        videoPut.minAgeRestriction = req.body.minAgeRestriction
-        videoPut.publicationDate = new Date().toISOString()
-        res.sendStatus(http_statuses.No_Content_204)
-    } else {
-        res.sendStatus(http_statuses.Not_Found_404)
+
+    const dateNow = new Date()
+
+    const video = videos.find(p => p.id === +req.params.id)
+
+    if (!video) {
+        res.status(http_statuses.Not_Found_404)
+        return
     }
+
+    video.id = +dateNow
+    video.title = title
+    video.author = author
+    video.canBeDownloaded = canBeDownloaded
+    video.minAgeRestriction = minAgeRestriction
+    video.createdAt = dateNow.toISOString()
+    video.publicationDate = getNextDayDate(dateNow).toISOString()
+    video.availableResolutions = availableResolutions
+
+
+    res.status((http_statuses.No_Content_204))
 })
 
-//
+
+
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
     if (!videosDeleteId) {
-        res.sendStatus(http_statuses.Not_Found_404)
-        return
+        res.status(http_statuses.Not_Found_404)
     } else {
-        res.send(videosDeleteId).sendStatus(http_statuses.No_Content_204)
+        res.status(http_statuses.No_Content_204).send(videosDeleteId)
     }
 })

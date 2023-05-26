@@ -1,4 +1,6 @@
-type videoType = {
+import exp from "constants";
+
+export type VideoType = {
     id: number,
     title: string,
     author: string,
@@ -9,5 +11,16 @@ type videoType = {
     availableResolutions: string[]
 }
 
+export type ErrorType = {
+    message: string
+    field: string
+}
 
 
+export enum ETest{}
+
+export type TTest = {}
+
+export interface ITest{}
+
+export class Test{}
