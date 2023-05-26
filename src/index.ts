@@ -6,7 +6,7 @@ import {testingRouter} from "./router/testing-router";
 const app = express()
 const port = process.env.PORT || 4000
 
-const parserMiddleware = bodyParser({})
+const parserMiddleware = bodyParser()
 
 app.use(parserMiddleware)
 
@@ -18,7 +18,7 @@ export const http_statuses = {
     Not_Found_404: 404,
 }
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hey').sendStatus(http_statuses.OK_200)
+    res.send('Hey you!')
 })
 
 app.use('/videos', videosRouter)

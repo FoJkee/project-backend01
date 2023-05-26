@@ -1,7 +1,6 @@
 import {Request, Response, Router} from "express";
 import {http_statuses} from "../index";
 
-
 export const videosRouter = Router()
 
 
