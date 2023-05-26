@@ -24,30 +24,45 @@ export const videos: VideoType[] = [
     }
 ]
 videosRouter.get('/', (req: Request, res: Response) => {
-    res.status(http_statuses.OK_200).send(videos)
+    res.status(200).send(videos)
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
     const {title, author, availableResolutions} = req.body
-    const errorsMessages: ErrorType[] = []
+    const errorsMessages = []
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        errorsMessages.push({
-            message: "Incorrect title",
-            field: "title"
-        })
+        errorsMessages.push(
+            {
+                errorsMessages: [
+                    {
+                        message: "Incorrect title",
+                        field: "title"
+                    }
+                ]
+            }
+        )
         res.status(http_statuses.Bad_Request_400).send(errorsMessages)
 
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        errorsMessages.push({
-            message: "Incorrect author",
-            field: "author"
-        })
+        errorsMessages.push(
+            {
+                errorsMessages: [
+                    {
+                        message: "Incorrect author",
+                        field: "author"
+                    }
+                ]
+            }
+        )
+
+    }
+
+    if (errorsMessages.length > 0 || errorsMessages === undefined) {
         res.status(400).send(errorsMessages)
         return
     }
-
     const dateNow = new Date()
 
     const newVideo: VideoType = {
@@ -74,24 +89,31 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
+
     const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
-    const errorsMessages: ErrorType[] = []
+    const errorsMessages = []
 
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         errorsMessages.push({
-            message: "Incorrect title",
-            field: "title"
+            errorsMessages: [
+                {
+                    message: "Incorrect title",
+                    field: "title"
+                }
+            ]
         })
-        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
 
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         errorsMessages.push({
-            message: "Incorrect author",
-            field: "author"
+            errorsMessages: [
+                {
+                    message: "Incorrect author",
+                    field: "author"
+                }
+            ]
         })
-        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
 
     }
     if (!(typeof (minAgeRestriction) === "number") ||
@@ -99,14 +121,16 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         !minAgeRestriction) {
 
         errorsMessages.push({
-            message: "Incorrect age",
-            field: "age"
+            errorsMessages: [
+                {
+                    message: "Incorrect minAgeRestriction",
+                    field: "minAgeRestriction"
+                }
+            ]
         })
-        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
-
     }
 
-    if (errorsMessages.length > 0) {
+    if (errorsMessages.length > 0 || errorsMessages === undefined) {
         res.status(http_statuses.Bad_Request_400).send(errorsMessages)
         return
     }
@@ -135,9 +159,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
-    if (videosDeleteId) {
-        res.status(http_statuses.Not_Found_404)
-    } else {
-        res.status(http_statuses.No_Content_204).send(videosDeleteId)
-    }
+    videosDeleteId.splice(0)
+    res.status(http_statuses.No_Content_204)
+
 })

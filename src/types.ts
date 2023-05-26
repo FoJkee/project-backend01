@@ -12,9 +12,11 @@ export type VideoType = {
 }
 
 export type ErrorType = {
-    message: string
+
+    message: string,
     field: string
 }
+
 
 
 export enum ETest{}
