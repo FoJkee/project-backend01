@@ -81,23 +81,23 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
     const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
-    const errorsMessages = []
+    // const errorsMessages:ErrorEvent[] = []
 
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        errorsMessages.push({
+        res.send({
             errorsMessages: [{
-                    "message": "Incorrect title",
-                    "field": "title"
+                    message: "Incorrect title",
+                    field: "title"
                 }]
         })
 
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        errorsMessages.push({
+        res.send({
             errorsMessages: [{
-                    "message": "Incorrect author",
-                    "field": "author"
+                    message: "Incorrect author",
+                    field: "author"
                 }]
         })
 
@@ -106,18 +106,18 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         minAgeRestriction < 1 || minAgeRestriction > 18 ||
         !minAgeRestriction) {
 
-        errorsMessages.push({
+        res.send({
             errorsMessages: [{
-                    "message": "Incorrect minAgeRestriction",
-                    "field": "minAgeRestriction"
+                    message: "Incorrect minAgeRestriction",
+                    field: "minAgeRestriction"
                 }]
         })
     }
 
-    if (errorsMessages.length > 0) {
-        res.status(http_statuses.Bad_Request_400).send(errorsMessages)
-        return
-    }
+    // if (errorsMessages.length > 0) {
+    //     res.status(http_statuses.Bad_Request_400).send(errorsMessages)
+    //     return
+    // }
 
     const dateNow = new Date()
 
