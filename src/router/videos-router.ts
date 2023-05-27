@@ -29,31 +29,30 @@ videosRouter.get('/', (req: Request, res: Response) => {
 
 videosRouter.post('/', (req: Request, res: Response) => {
     const {title, author, availableResolutions} = req.body
-    const errorsMessages = []
+
+    // const errorsMessages: ErrorEvent[] = []
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        errorsMessages.push({
-                errorsMessages: [{
-                        "message": "Incorrect title",
-                        "field": "title"
-                    }]
-            })
-
+        res.send({
+            errorsMessage: [{
+                "message": "Incorrect title",
+                "field": "title"
+            }]
+        })
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        errorsMessages.push({
+        res.send({
                 errorsMessages: [{
                         "message": "Incorrect author",
                         "field": "author"
                     }]
             })
-
     }
 
-    if (errorsMessages.length > 0 || errorsMessages === undefined) {
-        res.status(400).send(errorsMessages)
-        return
-    }
+    // if (errorsMessages.length > 0) {
+    //     res.status(400)
+    //     return
+    // }
     const dateNow = new Date()
 
     const newVideo: VideoType = {
@@ -72,11 +71,11 @@ videosRouter.post('/', (req: Request, res: Response) => {
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(p => p.id === +req.params.id)
-    if (!videosGetId) {
+    if (videosGetId) {
         res.status(http_statuses.Not_Found_404)
         return
     }
-    res.status(http_statuses.OK_200).send(videosGetId)
+    res.send(videosGetId)
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
@@ -115,7 +114,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (errorsMessages.length > 0 && errorsMessages === undefined) {
+    if (errorsMessages.length > 0) {
         res.status(http_statuses.Bad_Request_400).send(errorsMessages)
         return
     }
@@ -144,7 +143,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
     const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
-    videosDeleteId.splice(0)
+    videosDeleteId.splice(1)
     res.status(http_statuses.No_Content_204)
 
 })
