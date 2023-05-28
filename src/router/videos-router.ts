@@ -13,8 +13,8 @@ const initDate = new Date()
 export const videos: VideoType[] = [
     {
         id: 0,
-        title: "string",
-        author: "string",
+        title: "",
+        author: "",
         canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: initDate.toISOString(),
