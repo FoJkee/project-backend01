@@ -24,13 +24,12 @@ export const videos: VideoType[] = [
 ]
 
 const errors = (messages: string, fields: string) => {
-    const message = {
+     return  {
         errorsMessages: [{
             message: messages,
             field: fields,
         }]
     }
-    return message
 }
 
 videosRouter.get('/', (req: Request, res: Response) => {
@@ -41,10 +40,10 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const {title, author, availableResolutions} = req.body
 
-    if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-
-        res.status(400).json(errors("Incorrect title", "title"))
-    }
+    // if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
+    //     res.status(400).json(errors("Incorrect title", "title"))
+    //
+    // }
 
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         res.status(400).json(errors("Incorrect author", "author"))
