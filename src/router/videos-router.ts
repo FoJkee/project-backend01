@@ -6,9 +6,9 @@ export const videosRouter = Router()
 
 const getNextDayDate = (dateNow: Date): Date => {
     const nextDay = new Date()
-    return new Date(nextDay.setDate(dateNow.getDate() + 1))
+    return new Date(nextDay.setDate(nextDay.getDate() + 1))
 }
-const initDate = new Date()
+
 
 export const videos: VideoType[] = [
     // {
@@ -46,17 +46,18 @@ export const videos: VideoType[] = [
 
 // const errors: ErrorType[] = []
 
-const errors = (message: string, field: string) => {
-    const messages = {
-        errorsMessage: [
-            message,
-            field
-        ]
+const errors = (messages: string, fields: string)  => {
+    const message = {
+        errorsMessage:  [{
+                message: messages,
+                field: fields
+            }]
     }
-    return messages
+    return message
 }
 
 videosRouter.get('/', (req: Request, res: Response) => {
+    const initDate = new Date()
     const {title, author} = req.body
     const videosGet: VideoType =
         {
@@ -76,6 +77,7 @@ videosRouter.get('/', (req: Request, res: Response) => {
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
+const postDate = new Date()
 
     const {title, author} = req.body
 
@@ -95,14 +97,14 @@ videosRouter.post('/', (req: Request, res: Response) => {
     //     }]
     // })
     const newVideo: VideoType = {
-        id: +initDate,
+        id: +postDate,
         title: title,
         author: author,
         canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: initDate.toISOString(),
-        publicationDate: getNextDayDate(initDate).toISOString(),
-        availableResolutions: ["P144"]
+        createdAt: postDate.toISOString(),
+        publicationDate: getNextDayDate(postDate).toISOString(),
+        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     }
     videos.push(newVideo)
     res.status(201).send(newVideo)
@@ -117,7 +119,8 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
-    const {title, author} = req.body
+    const putDay = new Date()
+    const {title, author,minAgeRestriction} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         res.status(400).send(errors("Incorrect title", "title")
@@ -125,6 +128,10 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         res.status(400).send(errors("Incorrect author", "author"))
+
+    }
+    if(minAgeRestriction > 18 || minAgeRestriction < 1){
+        res.status(400).send(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
         return;
     }
 
@@ -135,13 +142,13 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         return;
     }
 
-    videoPut.id = +initDate
+    videoPut.id = +putDay
     videoPut.title = title
     videoPut.author = author
     videoPut.canBeDownloaded = true
     videoPut.minAgeRestriction = 18
-    videoPut.createdAt = initDate.toISOString()
-    videoPut.publicationDate = getNextDayDate(initDate).toISOString()
+    videoPut.createdAt = putDay.toISOString()
+    videoPut.publicationDate = getNextDayDate(putDay).toISOString()
     videoPut.availableResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 
     res.sendStatus(204)
