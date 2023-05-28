@@ -1,5 +1,6 @@
 import {Request, Response, Router} from "express";
 import {VideoType} from "../types";
+import {describe} from "node:test";
 
 
 export const videosRouter = Router()
@@ -24,12 +25,34 @@ export const videos: VideoType[] = [
 ]
 
 const errors = (messages: string, fields: string) => {
-     return  {
+    return {
         errorsMessages: [{
             message: messages,
             field: fields,
         }]
     }
+
+}
+type Error = {
+    message: string,
+    field: string,
+
+}
+const validateFields = (title: string, author: string) => {
+    let errorsArr: Error[] = []
+    if (!title || !title.trim() || title.length > 40) {
+        errorsArr.push({
+            message: "Incorrect title",
+            field: "title"
+        })
+    }
+    if (!author || !author.trim() || author.length > 20) {
+        errorsArr.push({
+            message: "Incorrect author",
+            field: "author"
+        })
+    }
+    return errorsArr
 }
 
 videosRouter.get('/', (req: Request, res: Response) => {
@@ -40,15 +63,21 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const {title, author, availableResolutions} = req.body
 
-    // if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
+    const a = validateFields(title, author)
+
+if (a.length > 0) res.status(400).json(a)
+
+
+
+    // // if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
     //     res.status(400).json(errors("Incorrect title", "title"))
     //
     // }
 
-    if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        res.status(400).json(errors("Incorrect author", "author"))
-        return
-    }
+    // // if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
+    //     res.status(400).json(errors("Incorrect author", "author"))
+    //     return
+    // }
 
     const newVideo: VideoType = {
         id: +postDate,
@@ -74,8 +103,10 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 })
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
-    const {title, author, minAgeRestriction, canBeDownloaded,
-        availableResolutions, publicationDate} = req.body
+    const {
+        title, author, minAgeRestriction, canBeDownloaded,
+        availableResolutions, publicationDate
+    } = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         res.status(400).json(errors("Incorrect title", "title")
