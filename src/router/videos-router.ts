@@ -1,5 +1,4 @@
 import {Request, Response, Router} from "express";
-import {http_statuses} from "../index";
 import {ErrorType, VideoType} from "../types";
 
 
@@ -119,7 +118,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         res.sendStatus(404)
         return
     }
-    const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
+    const {title, author, canBeDownloaded, minAgeRestriction} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         errors.push({
