@@ -6,7 +6,7 @@ export const videosRouter = Router()
 
 const getNextDayDate = (dateNow: Date): Date => {
     const nextDay = new Date()
-    return new Date(nextDay.setDate(nextDay.getDate() + 1))
+    return new Date(nextDay.setDate(dateNow.getDate() + 1))
 }
 
 
@@ -61,9 +61,9 @@ videosRouter.get('/', (req: Request, res: Response) => {
     const {title, author} = req.body
     const videosGet: VideoType =
         {
-            id: +initDate,
-            title: title,
-            author: author,
+            id: 0,
+            title: 'title',
+            author: 'author',
             canBeDownloaded: false,
             minAgeRestriction: null,
             createdAt: initDate.toISOString(),
@@ -120,7 +120,7 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
     const putDay = new Date()
-    const {title, author,minAgeRestriction} = req.body
+    const {title, author,minAgeRestriction,canBeDownloaded} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         res.status(400).send(errors("Incorrect title", "title")
@@ -130,7 +130,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         res.status(400).send(errors("Incorrect author", "author"))
 
     }
-    if(minAgeRestriction > 18 || minAgeRestriction < 1){
+    if(!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 || minAgeRestriction > 18){
         res.status(400).send(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
         return;
     }
@@ -141,13 +141,10 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         res.sendStatus(404)
         return;
     }
-
-    videoPut.id = +putDay
     videoPut.title = title
     videoPut.author = author
-    videoPut.canBeDownloaded = true
-    videoPut.minAgeRestriction = 18
-    videoPut.createdAt = putDay.toISOString()
+    videoPut.canBeDownloaded = canBeDownloaded
+    videoPut.minAgeRestriction = minAgeRestriction
     videoPut.publicationDate = getNextDayDate(putDay).toISOString()
     videoPut.availableResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 
