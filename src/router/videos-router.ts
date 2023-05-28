@@ -8,19 +8,19 @@ const getNextDayDate = (dateNow: Date): Date => {
     const nextDay = new Date()
     return new Date(nextDay.setDate(dateNow.getDate() + 1))
 }
-
+const initDate = new Date()
 
 export const videos: VideoType[] = [
-    // {
-    //     id: 0,
-    //     title: "string",
-    //     author: "string",
-    //     canBeDownloaded: false,
-    //     minAgeRestriction: null,
-    //     createdAt: initDate.toISOString(),
-    //     publicationDate: getNextDayDate(initDate).toISOString(),
-    //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-    // },
+    {
+        id: 0,
+        title: "string",
+        author: "string",
+        canBeDownloaded: false,
+        minAgeRestriction: null,
+        createdAt: initDate.toISOString(),
+        publicationDate: getNextDayDate(initDate).toISOString(),
+        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+    }
     // {
     //     id: 1,
     //     title: "string",
@@ -41,45 +41,28 @@ export const videos: VideoType[] = [
     //     publicationDate: getNextDayDate(initDate).toISOString(),
     //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     // }
-
 ]
 
 // const errors: ErrorType[] = []
 
-const errors = (messages: string, fields: string)  => {
+const errors = (messages: string, fields: string) => {
     const message = {
-        errorsMessage:  [{
-                message: messages,
-                field: fields
-            }]
+        errorsMessage: [{
+            message: messages,
+            field: fields
+        }]
     }
     return message
 }
 
 videosRouter.get('/', (req: Request, res: Response) => {
-    const initDate = new Date()
-    const {title, author} = req.body
-    const videosGet: VideoType =
-        {
-            id: 0,
-            title: 'title',
-            author: 'author',
-            canBeDownloaded: false,
-            minAgeRestriction: null,
-            createdAt: initDate.toISOString(),
-            publicationDate: getNextDayDate(initDate).toISOString(),
-            availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-        }
-
-    videos.push(videosGet)
-
     res.status(200).send(videos)
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
-const postDate = new Date()
+    const postDate = new Date()
 
-    const {title, author} = req.body
+    const {title, author, availableResolutions} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
 
@@ -104,7 +87,7 @@ const postDate = new Date()
         minAgeRestriction: null,
         createdAt: postDate.toISOString(),
         publicationDate: getNextDayDate(postDate).toISOString(),
-        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+        availableResolutions: availableResolutions
     }
     videos.push(newVideo)
     res.status(201).send(newVideo)
@@ -120,7 +103,7 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
     const putDay = new Date()
-    const {title, author,minAgeRestriction,canBeDownloaded} = req.body
+    const {title, author, minAgeRestriction, canBeDownloaded, availableResolutions} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         res.status(400).send(errors("Incorrect title", "title")
@@ -130,7 +113,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         res.status(400).send(errors("Incorrect author", "author"))
 
     }
-    if(!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 || minAgeRestriction > 18){
+    if (!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 || minAgeRestriction > 18) {
         res.status(400).send(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
         return;
     }
@@ -146,7 +129,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     videoPut.canBeDownloaded = canBeDownloaded
     videoPut.minAgeRestriction = minAgeRestriction
     videoPut.publicationDate = getNextDayDate(putDay).toISOString()
-    videoPut.availableResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+    videoPut.availableResolutions = availableResolutions
 
     res.sendStatus(204)
 
