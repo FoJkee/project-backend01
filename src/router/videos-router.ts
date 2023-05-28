@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express";
-import {ErrorType, VideoType} from "../types";
+import {VideoType} from "../types";
 
 
 export const videosRouter = Router()
@@ -44,7 +44,18 @@ export const videos: VideoType[] = [
 
 ]
 
-const errors: ErrorType[] = []
+// const errors: ErrorType[] = []
+
+const errors = (message: string, field: string) => {
+    const messages = {
+        errorsMessage: [
+            message,
+            field
+        ]
+    }
+    return messages
+}
+
 videosRouter.get('/', (req: Request, res: Response) => {
     const {title, author} = req.body
     const videosGet: VideoType =
@@ -68,6 +79,21 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const {title, author} = req.body
 
+    if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
+
+        res.status(400).send(errors("Incorrect title", "title"))
+    }
+
+    if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
+        res.status(400).send(errors("Incorrect author", "author"))
+        return
+    }
+    // errors.push({
+    //     errorsMessages: [{
+    //         message: "Incorrect author",
+    //         field: "author"
+    //     }]
+    // })
     const newVideo: VideoType = {
         id: +initDate,
         title: title,
@@ -78,31 +104,8 @@ videosRouter.post('/', (req: Request, res: Response) => {
         publicationDate: getNextDayDate(initDate).toISOString(),
         availableResolutions: ["P144"]
     }
-
-    if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        errors.push({
-            errorsMessages: [{
-                message: "Incorrect title",
-                field: "title"
-            }]
-        })
-    }
-
-    if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        errors.push({
-            errorsMessages: [{
-                message: "Incorrect author",
-                field: "author"
-            }]
-        })
-    }
-
-    if (errors.length > 0) {
-        res.status(400).send(errors)
-        return;
-    }
     videos.push(newVideo)
-    res.status(201).send(videos)
+    res.status(201).send(newVideo)
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(el => el.id === +req.params.id)
@@ -114,41 +117,17 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
-    const {title, author, minAgeRestriction} = req.body
+    const {title, author} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        errors.push({
-            errorsMessages: [{
-                message: "Incorrect title",
-                field: "title"
-            }]
-        })
+        res.status(400).send(errors("Incorrect title", "title")
+        )
     }
-
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        errors.push({
-            errorsMessages: [{
-                message: "Incorrect author",
-                field: "author"
-            }]
-        })
-
-    }
-    if (!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 ||
-        minAgeRestriction > 18) {
-
-        errors.push({
-            errorsMessages: [{
-                message: "Incorrect minAgeRestriction",
-                field: "minAgeRestriction"
-            }]
-        })
-    }
-
-    if (errors.length > 0) {
-        res.status(400).send(errors)
+        res.status(400).send(errors("Incorrect author", "author"))
         return;
     }
+
     const videoPut = videos.find(p => p.id === +req.params.id)
 
     if (!videoPut) {
@@ -165,7 +144,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     videoPut.publicationDate = getNextDayDate(initDate).toISOString()
     videoPut.availableResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 
-        res.sendStatus(204)
+    res.sendStatus(204)
 
 })
 

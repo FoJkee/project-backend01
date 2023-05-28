@@ -10,10 +10,7 @@ export type VideoType = {
 }
 
 export type ErrorType = {
-    errorsMessages: [{
-        message:string,
-        field: string
-    }]
+    errorsMessages: string[]
 }
 
 
