@@ -1,6 +1,7 @@
 import {Request, Response, Router} from "express";
 import {http_statuses} from "../index";
-import {VideoType} from "../types";
+import {ErrorType, VideoType} from "../types";
+
 
 export const videosRouter = Router()
 
@@ -8,51 +9,50 @@ const getNextDayDate = (dateNow: Date): Date => {
     const nextDay = new Date()
     return new Date(nextDay.setDate(dateNow.getDate() + 1))
 }
-
 const initDate = new Date()
 
-export const videos: VideoType[] = [
-    {
-        id: 0,
-        title: "any string",
-        author: "any string",
-        canBeDownloaded: false,
-        minAgeRestriction: 12,
-        createdAt: initDate.toISOString(),
-        publicationDate: getNextDayDate(initDate).toISOString(),
-        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-    }
-]
+export const videos:VideoType[] = []
+const errors: ErrorType[] = []
 videosRouter.get('/', (req: Request, res: Response) => {
+    const {title, author} = req.body
+
+    const videosGet: VideoType =
+        {
+            id: +initDate,
+            title: title,
+            author: author,
+            canBeDownloaded: false,
+            minAgeRestriction: null,
+            createdAt: initDate.toISOString(),
+            publicationDate: getNextDayDate(initDate).toISOString(),
+            availableResolutions:["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+        }
+
+    videos.push(videosGet)
+
     res.status(200).send(videos)
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
     const {title, author, availableResolutions} = req.body
 
-    // const errorsMessages: ErrorEvent[] = []
-
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        res.send({
-            errorsMessage: [{
-                "message": "Incorrect title",
-                "field": "title"
-            }]
+        errors.push({
+                message: "Incorrect title",
+                field: "title"
         })
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        res.send({
-                errorsMessages: [{
-                        "message": "Incorrect author",
-                        "field": "author"
-                    }]
-            })
+        errors.push({
+            message: "Incorrect author",
+            field: "author"
+        })
     }
 
-    // if (errorsMessages.length > 0) {
-    //     res.status(400)
-    //     return
-    // }
+    if (errors.length > 0) {
+        res.status(400).send(errors)
+        return
+    }
     const dateNow = new Date()
 
     const newVideo: VideoType = {
@@ -71,7 +71,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(p => p.id === +req.params.id)
-    if (videosGetId) {
+    if (!videosGetId) {
         res.status(http_statuses.Not_Found_404)
         return
     }
@@ -80,25 +80,24 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
+    const video = videos.find(p => p.id === +req.params.id)
+    if (!video) {
+        res.status(http_statuses.Not_Found_404)
+        return
+    }
     const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
-    // const errorsMessages:ErrorEvent[] = []
-
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        res.send({
-            errorsMessages: [{
-                    message: "Incorrect title",
-                    field: "title"
-                }]
+        errors.push({
+                message: "Incorrect title",
+                field: "title"
         })
 
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        res.send({
-            errorsMessages: [{
-                    message: "Incorrect author",
-                    field: "author"
-                }]
+        errors.push({
+            message: "Incorrect author",
+            field: "author"
         })
 
     }
@@ -106,28 +105,17 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         minAgeRestriction < 1 || minAgeRestriction > 18 ||
         !minAgeRestriction) {
 
-        res.send({
-            errorsMessages: [{
-                    message: "Incorrect minAgeRestriction",
-                    field: "minAgeRestriction"
-                }]
+        errors.push({
+                message: "Incorrect minAgeRestriction",
+                field: "minAgeRestriction"
         })
     }
 
-    // if (errorsMessages.length > 0) {
-    //     res.status(http_statuses.Bad_Request_400).send(errorsMessages)
-    //     return
-    // }
-
-    const dateNow = new Date()
-
-    const video = videos.find(p => p.id === +req.params.id)
-
-    if (!video) {
-        res.status(http_statuses.Not_Found_404)
+    if (errors.length > 0) {
+        res.status(400).send(errors)
         return
     }
-
+    const dateNow = new Date()
     video.id = +dateNow
     video.title = title
     video.author = author
@@ -137,13 +125,24 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     video.publicationDate = getNextDayDate(dateNow).toISOString()
     video.availableResolutions = availableResolutions
 
-
     res.status((http_statuses.No_Content_204))
 })
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
-    const videosDeleteId = videos.filter(p => p.id !== +req.params.id)
-    videosDeleteId.splice(1)
-    res.status(http_statuses.No_Content_204)
+    for(let i = 0; i<videos.length; i++){
+        if(videos[i].id === +req.params.id){
+            videos.splice(i, 1)
+            res.status(204)
+        }
+    }
+    res.status(404)
 
+
+    // for (let key of videos) {
+    //     if (videos[key] === +req.params.id) {
+    //         videos.splice(key.id, 1)
+    //         res.status(204)
+    //     }
+    // }
+    // res.status(404)
 })

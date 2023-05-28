@@ -1,5 +1,3 @@
-
-
 export type VideoType = {
     id: number,
     title: string,
@@ -14,15 +12,15 @@ export type VideoType = {
 export type ErrorType = {
         message: string,
         field: string
-
 }
 
 
 
-export enum ETest{}
+export enum ETest {}
 
-export type TTest = {}
 
-export interface ITest{}
+export interface ITest {
+}
 
-export class Test{}
+export class Test {
+}
