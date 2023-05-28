@@ -11,8 +11,8 @@ export type VideoType = {
 
 export type ErrorType = {
     errorsMessages: [{
-        message:any,
-        field: any
+        message:string,
+        field: string
     }]
 }
 

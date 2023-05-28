@@ -47,7 +47,6 @@ export const videos: VideoType[] = [
 const errors: ErrorType[] = []
 videosRouter.get('/', (req: Request, res: Response) => {
     const {title, author} = req.body
-
     const videosGet: VideoType =
         {
             id: +initDate,
@@ -77,7 +76,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
         minAgeRestriction: null,
         createdAt: initDate.toISOString(),
         publicationDate: getNextDayDate(initDate).toISOString(),
-        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+        availableResolutions: ["P144"]
     }
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
@@ -98,7 +97,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
         })
     }
 
-    if (errors.indexOf(req.body) > -1) {
+    if (errors.length > 0) {
         res.status(400).send(errors)
         return;
     }
@@ -115,7 +114,7 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
-    const {title, author, canBeDownloaded, minAgeRestriction} = req.body
+    const {title, author, minAgeRestriction} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         errors.push({
@@ -146,7 +145,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (errors.indexOf(req.body) > -1) {
+    if (errors.length > 0) {
         res.status(400).send(errors)
         return;
     }
@@ -160,8 +159,8 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     videoPut.id = +initDate
     videoPut.title = title
     videoPut.author = author
-    videoPut.canBeDownloaded = canBeDownloaded
-    videoPut.minAgeRestriction = minAgeRestriction
+    videoPut.canBeDownloaded = true
+    videoPut.minAgeRestriction = 18
     videoPut.createdAt = initDate.toISOString()
     videoPut.publicationDate = getNextDayDate(initDate).toISOString()
     videoPut.availableResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
