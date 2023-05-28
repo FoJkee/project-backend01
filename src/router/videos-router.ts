@@ -21,29 +21,7 @@ export const videos: VideoType[] = [
         publicationDate: getNextDayDate(initDate).toISOString(),
         availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     }
-    // {
-    //     id: 1,
-    //     title: "string",
-    //     author: "string",
-    //     canBeDownloaded: false,
-    //     minAgeRestriction: null,
-    //     createdAt: initDate.toISOString(),
-    //     publicationDate: getNextDayDate(initDate).toISOString(),
-    //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-    // },
-    // {
-    //     id: 2,
-    //     title: "string",
-    //     author: "string",
-    //     canBeDownloaded: false,
-    //     minAgeRestriction: null,
-    //     createdAt: initDate.toISOString(),
-    //     publicationDate: getNextDayDate(initDate).toISOString(),
-    //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
-    // }
 ]
-
-// const errors: ErrorType[] = []
 
 const errors = (messages: string, fields: string) => {
     const message = {
@@ -103,7 +81,7 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
     const putDay = new Date()
-    const {title, author, minAgeRestriction, canBeDownloaded, availableResolutions} = req.body
+    const {title, author, minAgeRestriction, canBeDownloaded, availableResolutions, publicationDate} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         res.status(400).send(errors("Incorrect title", "title")
@@ -128,14 +106,14 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     videoPut.author = author
     videoPut.canBeDownloaded = canBeDownloaded
     videoPut.minAgeRestriction = minAgeRestriction
-    videoPut.publicationDate = getNextDayDate(putDay).toISOString()
+    videoPut.publicationDate = publicationDate
     videoPut.availableResolutions = availableResolutions
-
     res.sendStatus(204)
 
 })
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
+
     for (let i = 0; i < videos.length; i++) {
         if (videos[i].id === +req.params.id) {
             videos.splice(i, 1)
@@ -145,12 +123,4 @@ videosRouter.delete('/:id', (req: Request, res: Response) => {
     }
     res.sendStatus(404)
 
-
-    // for (let key of videos) {
-    //     if (videos[key] === +req.params.id) {
-    //         videos.splice(key.id, 1)
-    //         res.status(204)
-    //     }
-    // }
-    // res.status(404)
 })
