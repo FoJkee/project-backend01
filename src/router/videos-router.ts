@@ -64,36 +64,24 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const a = validateFields(title, author)
 
-if (a.length > 0) {
-    res.status(400).json({errorsMessages: a})
-    return;
-}
+    if (a.length > 0) {
+        res.status(400).json({errorsMessages: a})
 
+    } else {
+        const newVideo: VideoType = {
+            id: +postDate,
+            title: title,
+            author: author,
+            canBeDownloaded: false,
+            minAgeRestriction: null,
+            createdAt: postDate.toISOString(),
+            publicationDate: getNextDayDate(postDate).toISOString(),
+            availableResolutions: availableResolutions
+        }
 
-
-    // // if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-    //     res.status(400).json(errors("Incorrect title", "title"))
-    //
-    // }
-
-    // // if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-    //     res.status(400).json(errors("Incorrect author", "author"))
-    //     return
-    // }
-
-    const newVideo: VideoType = {
-        id: +postDate,
-        title: title,
-        author: author,
-        canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: postDate.toISOString(),
-        publicationDate: getNextDayDate(postDate).toISOString(),
-        availableResolutions: availableResolutions
+        videos.push(newVideo)
+        res.status(201).send(newVideo)
     }
-
-    videos.push(newVideo)
-    res.status(201).send(newVideo)
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(el => el.id === +req.params.id)
