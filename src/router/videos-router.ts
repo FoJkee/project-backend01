@@ -9,7 +9,7 @@ const getNextDayDate = (dateNow: Date): Date => {
     return new Date(nextDay.setDate(dateNow.getDate() + 1))
 }
 const initDate = new Date()
-
+const resolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
 export const videos: VideoType[] = [
     {
         id: 0,
@@ -19,7 +19,7 @@ export const videos: VideoType[] = [
         minAgeRestriction: null,
         createdAt: initDate.toISOString(),
         publicationDate: getNextDayDate(initDate).toISOString(),
-        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+        availableResolutions: resolutions
     }
 ]
 
@@ -37,7 +37,7 @@ type Error = {
     field: string,
 
 }
-const validateFields = (title: string, author: string) => {
+const validateFields = (title: string, author: string, availableResolutions:string[]) => {
     let errorsArr: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
         errorsArr.push({
@@ -51,6 +51,14 @@ const validateFields = (title: string, author: string) => {
             field: "author"
         })
     }
+    availableResolutions.forEach(el => {
+        if(!resolutions.some(el1 => el1 === el)){
+            errorsArr.push({
+                message: "Incorrect availableResolutions",
+                field: "availableResolutions"
+            })
+        }
+    })
     return errorsArr
 }
 
@@ -62,7 +70,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const {title, author, availableResolutions} = req.body
 
-    const a = validateFields(title, author)
+    const a = validateFields(title, author, availableResolutions)
 
     if (a.length > 0) {
         res.status(400).
