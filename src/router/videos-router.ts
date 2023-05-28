@@ -25,9 +25,9 @@ export const videos: VideoType[] = [
 
 const errors = (messages: string, fields: string) => {
     const message = {
-        errorsMessage: [{
+        errorsMessages: [{
             message: messages,
-            field: fields
+            field: fields,
         }]
     }
     return message
@@ -36,7 +36,6 @@ const errors = (messages: string, fields: string) => {
 videosRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(videos)
 })
-
 videosRouter.post('/', (req: Request, res: Response) => {
     const postDate = new Date()
 
@@ -51,12 +50,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
         res.status(400).send(errors("Incorrect author", "author"))
         return
     }
-    // errors.push({
-    //     errorsMessages: [{
-    //         message: "Incorrect author",
-    //         field: "author"
-    //     }]
-    // })
+
     const newVideo: VideoType = {
         id: +postDate,
         title: title,
@@ -67,6 +61,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
         publicationDate: getNextDayDate(postDate).toISOString(),
         availableResolutions: availableResolutions
     }
+
     videos.push(newVideo)
     res.status(201).send(newVideo)
 })
@@ -78,19 +73,21 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
     }
     res.status(200).send(videosGetId)
 })
-//
 videosRouter.put('/:id', (req: Request, res: Response) => {
-    const putDay = new Date()
-    const {title, author, minAgeRestriction, canBeDownloaded, availableResolutions, publicationDate} = req.body
+
+    const {title, author, minAgeRestriction, canBeDownloaded,
+        availableResolutions, publicationDate} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         res.status(400).send(errors("Incorrect title", "title")
         )
     }
+
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
         res.status(400).send(errors("Incorrect author", "author"))
 
     }
+
     if (!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 || minAgeRestriction > 18) {
         res.status(400).send(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
         return;
@@ -102,6 +99,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         res.sendStatus(404)
         return;
     }
+
     videoPut.title = title
     videoPut.author = author
     videoPut.canBeDownloaded = canBeDownloaded
@@ -111,7 +109,6 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     res.sendStatus(204)
 
 })
-
 videosRouter.delete('/:id', (req: Request, res: Response) => {
 
     for (let i = 0; i < videos.length; i++) {
