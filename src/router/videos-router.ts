@@ -12,7 +12,8 @@ const getNextDayDate = (dateNow: Date): Date => {
 const initDate = new Date()
 
 export const videos:VideoType[] = []
-const errors: ErrorType[] = []
+
+const errors:ErrorType[] = []
 videosRouter.get('/', (req: Request, res: Response) => {
     const {title, author} = req.body
 
@@ -72,17 +73,17 @@ videosRouter.post('/', (req: Request, res: Response) => {
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(p => p.id === +req.params.id)
     if (!videosGetId) {
-        res.status(http_statuses.Not_Found_404)
-        return
+        res.status(404)
+    } else {
+        res.send(videosGetId)
     }
-    res.send(videosGetId)
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
     const video = videos.find(p => p.id === +req.params.id)
     if (!video) {
-        res.status(http_statuses.Not_Found_404)
+        res.status(404)
         return
     }
     const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
@@ -101,9 +102,8 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
 
     }
-    if (!(typeof (minAgeRestriction) === "number") ||
-        minAgeRestriction < 1 || minAgeRestriction > 18 ||
-        !minAgeRestriction) {
+    if (!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 ||
+        minAgeRestriction > 18) {
 
         errors.push({
                 message: "Incorrect minAgeRestriction",
@@ -133,6 +133,7 @@ videosRouter.delete('/:id', (req: Request, res: Response) => {
         if(videos[i].id === +req.params.id){
             videos.splice(i, 1)
             res.status(204)
+            return
         }
     }
     res.status(404)
