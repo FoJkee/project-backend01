@@ -1,6 +1,5 @@
 import {Request, Response, Router} from "express";
 import {VideoType} from "../types";
-import {describe} from "node:test";
 
 
 export const videosRouter = Router()
@@ -65,7 +64,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const a = validateFields(title, author)
 
-if (a.length > 0) res.status(400).json(a)
+if (a.length > 0) res.status(400).json({errorsMessages: a})
 
 
 
