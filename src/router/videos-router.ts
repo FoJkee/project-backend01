@@ -11,9 +11,41 @@ const getNextDayDate = (dateNow: Date): Date => {
 }
 const initDate = new Date()
 
-export const videos:VideoType[] = []
+export const videos: VideoType[] = [
+    // {
+    //     id: 0,
+    //     title: "string",
+    //     author: "string",
+    //     canBeDownloaded: false,
+    //     minAgeRestriction: null,
+    //     createdAt: initDate.toISOString(),
+    //     publicationDate: getNextDayDate(initDate).toISOString(),
+    //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+    // },
+    // {
+    //     id: 1,
+    //     title: "string",
+    //     author: "string",
+    //     canBeDownloaded: false,
+    //     minAgeRestriction: null,
+    //     createdAt: initDate.toISOString(),
+    //     publicationDate: getNextDayDate(initDate).toISOString(),
+    //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+    // },
+    // {
+    //     id: 2,
+    //     title: "string",
+    //     author: "string",
+    //     canBeDownloaded: false,
+    //     minAgeRestriction: null,
+    //     createdAt: initDate.toISOString(),
+    //     publicationDate: getNextDayDate(initDate).toISOString(),
+    //     availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+    // }
 
-const errors:ErrorType[] = []
+]
+
+const errors: ErrorType[] = []
 videosRouter.get('/', (req: Request, res: Response) => {
     const {title, author} = req.body
 
@@ -35,12 +67,13 @@ videosRouter.get('/', (req: Request, res: Response) => {
 })
 
 videosRouter.post('/', (req: Request, res: Response) => {
-    const {title, author, availableResolutions} = req.body
+
+    const {title, author} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         errors.push({
-                message: "Incorrect title",
-                field: "title"
+            message: "Incorrect title",
+            field: "title"
         })
     }
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
@@ -49,7 +82,6 @@ videosRouter.post('/', (req: Request, res: Response) => {
             field: "author"
         })
     }
-
     if (errors.length > 0) {
         res.status(400).send(errors)
         return
@@ -64,34 +96,35 @@ videosRouter.post('/', (req: Request, res: Response) => {
         minAgeRestriction: null,
         createdAt: dateNow.toISOString(),
         publicationDate: getNextDayDate(dateNow).toISOString(),
-        availableResolutions: availableResolutions
+        availableResolutions: ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
     }
     videos.push(newVideo)
-    res.status(http_statuses.Created_201)
+    res.sendStatus(201)
 
 })
 videosRouter.get('/:id', (req: Request, res: Response) => {
     const videosGetId = videos.find(p => p.id === +req.params.id)
     if (!videosGetId) {
-        res.status(404)
-    } else {
-        res.send(videosGetId)
+        res.sendStatus(404)
+        return
     }
+    res.status(200).send(videosGetId)
 })
 //
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
     const video = videos.find(p => p.id === +req.params.id)
+
     if (!video) {
-        res.status(404)
+        res.sendStatus(404)
         return
     }
     const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
         errors.push({
-                message: "Incorrect title",
-                field: "title"
+            message: "Incorrect title",
+            field: "title"
         })
 
     }
@@ -106,8 +139,8 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         minAgeRestriction > 18) {
 
         errors.push({
-                message: "Incorrect minAgeRestriction",
-                field: "minAgeRestriction"
+            message: "Incorrect minAgeRestriction",
+            field: "minAgeRestriction"
         })
     }
 
@@ -123,20 +156,19 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     video.minAgeRestriction = minAgeRestriction
     video.createdAt = dateNow.toISOString()
     video.publicationDate = getNextDayDate(dateNow).toISOString()
-    video.availableResolutions = availableResolutions
-
-    res.status((http_statuses.No_Content_204))
+    video.availableResolutions = ["P144", "P240", "P360", "P480", "P720", "P1080", "P1440", "P2160"]
+    res.sendStatus(204)
 })
 
 videosRouter.delete('/:id', (req: Request, res: Response) => {
-    for(let i = 0; i<videos.length; i++){
-        if(videos[i].id === +req.params.id){
+    for (let i = 0; i < videos.length; i++) {
+        if (videos[i].id === +req.params.id) {
             videos.splice(i, 1)
-            res.status(204)
+            res.sendStatus(204)
             return
         }
     }
-    res.status(404)
+    res.sendStatus(404)
 
 
     // for (let key of videos) {
