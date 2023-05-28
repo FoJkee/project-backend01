@@ -62,7 +62,7 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const {title, author, availableResolutions} = req.body
 
-    const a = validateFields(title, author)
+    const a = validateFields('', '')
 
     if (a.length > 0) {
         res.status(400).
