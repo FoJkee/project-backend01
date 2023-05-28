@@ -43,11 +43,11 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
 
-        res.status(400).send(errors("Incorrect title", "title"))
+        res.status(400).json(errors("Incorrect title", "title"))
     }
 
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        res.status(400).send(errors("Incorrect author", "author"))
+        res.status(400).json(errors("Incorrect author", "author"))
         return
     }
 
@@ -79,17 +79,17 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         availableResolutions, publicationDate} = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        res.status(400).send(errors("Incorrect title", "title")
+        res.status(400).json(errors("Incorrect title", "title")
         )
     }
 
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        res.status(400).send(errors("Incorrect author", "author"))
+        res.status(400).json(errors("Incorrect author", "author"))
 
     }
 
     if (!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 || minAgeRestriction > 18) {
-        res.status(400).send(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
+        res.status(400).json(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
         return;
     }
 
