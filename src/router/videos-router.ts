@@ -65,7 +65,8 @@ videosRouter.post('/', (req: Request, res: Response) => {
     const a = validateFields(title, author)
 
     if (a.length > 0) {
-        res.status(400).json({errorsMessages: a})
+        res.status(400).
+        json({errorsMessages: a})
 
     } else {
         const newVideo: VideoType = {
