@@ -23,22 +23,42 @@ export const videos: VideoType[] = [
     }
 ]
 
+let errorsArr: Error[] = []
+
+// const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number) => {
+//     let errorsArr: Error[] = []
+//     if (!title || !title.trim() || title.length > 40) {
+//         errorsArr.push({
+//             message: "Incorrect title",
+//             field: "title"
+//         })
+//     }
+//     if (!author || !author.trim() || author.length > 20) {
+//         errorsArr.push({
+//             message: "Incorrect author",
+//             field: "author"
+//         })
+//     }
+//     availableResolutions.forEach(el => {
+//         if (!resolutions.some(el1 => el1 === el)) {
+//             errorsArr.push({
+//                 message: "Incorrect availableResolutions",
+//                 field: "availableResolutions"
+//             })
+//         }
+//     })
+//     if (minAgeRestriction < 1 || minAgeRestriction > 18) {
+//         errorsArr.push({
+//             message: "Incorrect minAgeRestriction",
+//             field: "minAgeRestriction"
+//         })
+//     }
+//
+//     return errorsArr
+// }
 
 
-const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number) => {
-    let errorsArr: Error[] = []
-    if (!title || !title.trim() || title.length > 40) {
-        errorsArr.push({
-            message: "Incorrect title",
-            field: "title"
-        })
-    }
-    if (!author || !author.trim() || author.length > 20) {
-        errorsArr.push({
-            message: "Incorrect author",
-            field: "author"
-        })
-    }
+const validateFields = (availableResolutions: string[]) => {
     availableResolutions.forEach(el => {
         if (!resolutions.some(el1 => el1 === el)) {
             errorsArr.push({
@@ -47,15 +67,8 @@ const validateFields = (title: string, author: string, availableResolutions: str
             })
         }
     })
-    if (minAgeRestriction < 1 || minAgeRestriction > 18) {
-        errorsArr.push({
-            message: "Incorrect minAgeRestriction",
-            field: "minAgeRestriction"
-        })
-    }
-
-    return errorsArr
 }
+
 
 videosRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(videos)
@@ -64,13 +77,25 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const postDate = new Date()
 
-    const {title, author, availableResolutions, minAgeRestriction} = req.body
+    const {title, author, availableResolutions} = req.body
 
-    const a = validateFields(title, author,
-        availableResolutions, minAgeRestriction)
+    // const a = validateFields(title, author,
+    //     availableResolutions, minAgeRestriction)
 
-    if (a.length > 0) {
-        res.status(400).json({errorsMessages: a})
+    if (!title || !(typeof(title) === 'string') || !title.trim() || title.length > 40) {
+        errorsArr.push({
+            message: "Incorrect title",
+            field: "title"
+        })
+    }
+    if (!author || !(typeof(author) === 'string') || !author.trim() || author.length > 20) {
+        errorsArr.push({
+            message: "Incorrect author",
+            field: "author"
+        })
+    }
+    if (errorsArr.length > 0) {
+        res.status(400).json({errorsMessages: errorsArr})
         return
     } else {
         const newVideo: VideoType = {
@@ -109,11 +134,13 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         availableResolutions, publicationDate
     } = req.body
 
-    const a = validateFields(title, author,
-        availableResolutions, minAgeRestriction)
+    // const a = validateFields(title, author,
+    //     availableResolutions, minAgeRestriction)
 
-    if (a.length > 0) {
-        res.status(400).json({errorsMessages: a})
+
+
+    if (errorsArr.length > 0) {
+        res.status(400).json({errorsMessages: errorsArr})
         return
     }
         videoPut.title = title
