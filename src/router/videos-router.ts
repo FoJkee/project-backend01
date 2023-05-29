@@ -25,7 +25,7 @@ export const videos: VideoType[] = [
 
 
 const validateFieldsPost = (title: string, author: string, availableResolutions: string[],
-                        minAgeRestriction: number) => {
+                            minAgeRestriction: number) => {
 
     let errorsArrPost: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
@@ -59,7 +59,7 @@ const validateFieldsPost = (title: string, author: string, availableResolutions:
 }
 
 const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
-                            minAgeRestriction: number, canBeDownloaded:string) => {
+                           minAgeRestriction: number, canBeDownloaded: boolean) => {
 
     let errorsArrPut: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
@@ -89,7 +89,7 @@ const validateFieldsPut = (title: string, author: string, availableResolutions: 
         })
     }
 
-    if(canBeDownloaded){
+    if (typeof (!canBeDownloaded) === "string" || !canBeDownloaded) {
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
@@ -97,7 +97,6 @@ const validateFieldsPut = (title: string, author: string, availableResolutions: 
     }
     return errorsArrPut
 }
-
 
 
 videosRouter.get('/', (req: Request, res: Response) => {
