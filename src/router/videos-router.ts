@@ -159,12 +159,12 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         availableResolutions, publicationDate
     } = req.body
 
-    const a = validateFieldsPut(title, author,
+    const b = validateFieldsPut(title, author,
         availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
 
 
-    if (a.length > 0) {
-        res.status(400).json({errorsMessages: a})
+    if (b.length > 0) {
+        res.status(400).json({errorsMessages: b})
         return
     }
 
