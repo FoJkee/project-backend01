@@ -198,7 +198,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
+    if (!canBeDownloaded) {
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
