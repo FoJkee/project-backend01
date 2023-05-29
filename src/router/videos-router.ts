@@ -24,8 +24,8 @@ export const videos: VideoType[] = [
 ]
 
 
-const validateFields = (title: string, author: string, availableResolutions: string[],
-                        minAgeRestriction: number, canBeDownloaded: boolean) => {
+const validateFieldsPost = (title: string, author: string, availableResolutions: string[],
+                        minAgeRestriction: number) => {
 
     let errorsArr: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
@@ -54,15 +54,50 @@ const validateFields = (title: string, author: string, availableResolutions: str
             field: "minAgeRestriction"
         })
     }
-    if (!canBeDownloaded) {
+
+    return errorsArr
+}
+
+const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
+                            minAgeRestriction: number, canBeDownloaded:boolean) => {
+
+    let errorsArr: Error[] = []
+    if (!title || !title.trim() || title.length > 40) {
+        errorsArr.push({
+            message: "Incorrect title",
+            field: "title"
+        })
+    }
+    if (!author || !author.trim() || author.length > 20) {
+        errorsArr.push({
+            message: "Incorrect author",
+            field: "author"
+        })
+    }
+    availableResolutions.forEach(el => {
+        if (!resolutions.some(el1 => el1 === el)) {
+            errorsArr.push({
+                message: "Incorrect availableResolutions",
+                field: "availableResolutions"
+            })
+        }
+    })
+    if (minAgeRestriction < 1 || minAgeRestriction > 18) {
+        errorsArr.push({
+            message: "Incorrect minAgeRestriction",
+            field: "minAgeRestriction"
+        })
+    }
+
+    if(!canBeDownloaded){
         errorsArr.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
         })
-
     }
     return errorsArr
 }
+
 
 
 videosRouter.get('/', (req: Request, res: Response) => {
@@ -72,22 +107,21 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const postDate = new Date()
 
-    const {title, author, availableResolutions, minAgeRestriction,canBeDownloaded} = req.body
+    const {title, author, availableResolutions, minAgeRestriction} = req.body
 
-    const a = validateFields(title, author,
-        availableResolutions, minAgeRestriction,
-        canBeDownloaded)
+    const post = validateFieldsPost(title, author,
+        availableResolutions, minAgeRestriction)
 
 
-    if (a.length > 0) {
-        res.status(400).json({errorsMessages: a})
+    if (post.length > 0) {
+        res.status(400).json({errorsMessages: post})
         return
     } else {
         const newVideo: VideoType = {
             id: +postDate,
             title: title,
             author: author,
-            canBeDownloaded: canBeDownloaded,
+            canBeDownloaded: false,
             minAgeRestriction: null,
             createdAt: postDate.toISOString(),
             publicationDate: getNextDayDate(postDate).toISOString(),
@@ -120,7 +154,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         availableResolutions, publicationDate
     } = req.body
 
-    const a = validateFields(title, author,
+    const a = validateFieldsPut(title, author,
         availableResolutions, minAgeRestriction, canBeDownloaded)
 
 
