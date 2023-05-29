@@ -204,7 +204,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
         })
-        return
+
     }
 
 
