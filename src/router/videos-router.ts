@@ -58,51 +58,52 @@ const validateFieldsPost = (title: string, author: string, availableResolutions:
     return errorsArrPost
 }
 
-const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
-                           minAgeRestriction: number, canBeDownloaded: boolean, publicationDate:string) => {
-
-    let errorsArrPut: Error[] = []
-    if (!title || !title.trim() || title.length > 40) {
-        errorsArrPut.push({
-            message: "Incorrect title",
-            field: "title"
-        })
-    }
-    if (!author || !author.trim() || author.length > 20) {
-        errorsArrPut.push({
-            message: "Incorrect author",
-            field: "author"
-        })
-    }
-    availableResolutions.forEach(el => {
-        if (!resolutions.some(el1 => el1 === el)) {
-            errorsArrPut.push({
-                message: "Incorrect availableResolutions",
-                field: "availableResolutions"
-            })
-        }
-    })
-    if (minAgeRestriction < 1 || minAgeRestriction > 18) {
-        errorsArrPut.push({
-            message: "Incorrect minAgeRestriction",
-            field: "minAgeRestriction"
-        })
-    }
-
-    if (typeof (canBeDownloaded) !== "boolean") {
-        errorsArrPut.push({
-            message: "Incorrect canBeDownloaded",
-            field: "canBeDownloaded"
-        })
-    }
-    if (!publicationDate){
-        errorsArrPut.push({
-            message: "Incorrect publicationDate",
-            field: "publicationDate"
-        })
-    }
-    return errorsArrPut
-}
+// const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
+//                            minAgeRestriction: number, canBeDownloaded: boolean,
+//                            publicationDate:string) => {
+//
+//     let errorsArrPut: Error[] = []
+//     if (!title || !title.trim() || title.length > 40) {
+//         errorsArrPut.push({
+//             message: "Incorrect title",
+//             field: "title"
+//         })
+//     }
+//     if (!author || !author.trim() || author.length > 20) {
+//         errorsArrPut.push({
+//             message: "Incorrect author",
+//             field: "author"
+//         })
+//     }
+//     availableResolutions.forEach(el => {
+//         if (!resolutions.some(el1 => el1 === el)) {
+//             errorsArrPut.push({
+//                 message: "Incorrect availableResolutions",
+//                 field: "availableResolutions"
+//             })
+//         }
+//     })
+//     if (minAgeRestriction < 1 || minAgeRestriction > 18) {
+//         errorsArrPut.push({
+//             message: "Incorrect minAgeRestriction",
+//             field: "minAgeRestriction"
+//         })
+//     }
+//
+//     if (typeof (canBeDownloaded) !== "boolean") {
+//         errorsArrPut.push({
+//             message: "Incorrect canBeDownloaded",
+//             field: "canBeDownloaded"
+//         })
+//     }
+//     if (publicationDate){
+//         errorsArrPut.push({
+//             message: "Incorrect publicationDate",
+//             field: "publicationDate"
+//         })
+//     }
+//     return errorsArrPut
+// }
 
 
 videosRouter.get('/', (req: Request, res: Response) => {
@@ -147,6 +148,8 @@ videosRouter.get('/:id', (req: Request, res: Response) => {
 })
 videosRouter.put('/:id', (req: Request, res: Response) => {
 
+    const errorsArrPut: Error[] = []
+
     const videoPut = videos.find(p => p.id === +req.params.id)
 
     if (!videoPut) {
@@ -159,33 +162,68 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         availableResolutions, publicationDate
     } = req.body
 
-    const b = validateFieldsPut(title, author,
-        availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
-
-
-    if (b.length > 0) {
-        res.status(400).json({errorsMessages: b})
-        return
+    if (!title || !(typeof (title) === "string") || !title.trim() || title.length > 40) {
+        errorsArrPut.push({
+            message: "Incorrect title",
+            field: "title"
+        })
     }
+        if (!author || !(typeof (author) === "string") || !author.trim() || author.length > 20) {
+            errorsArrPut.push({
+                message: "Incorrect author",
+                field: "author"
+            })
+        }
+        if (minAgeRestriction < 1 || minAgeRestriction > 18) {
+            errorsArrPut.push({
+                message: "Incorrect minAgeRestriction",
+                field: "minAgeRestriction"
+            })
+        }
 
-    videoPut.title = title
-    videoPut.author = author
-    videoPut.canBeDownloaded = canBeDownloaded
-    videoPut.minAgeRestriction = minAgeRestriction
-    videoPut.publicationDate = publicationDate
-    videoPut.availableResolutions = availableResolutions
-    res.sendStatus(204)
+        resolutions.forEach(el => {
+            if (!resolutions.some(el1 => el1 === el)) {
+                errorsArrPut.push({
+                    message: "Incorrect availableResolutions",
+                    field: "availableResolutions"
+                })
+            }
+            return
+        })
 
-})
-videosRouter.delete('/:id', (req: Request, res: Response) => {
 
-    for (let i = 0; i < videos.length; i++) {
-        if (videos[i].id === +req.params.id) {
-            videos.splice(i, 1)
-            res.sendStatus(204)
+
+
+
+
+
+        // const b = validateFieldsPut(title, author,
+        //     availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
+
+
+        if (errorsArrPut.length > 0) {
+            res.status(400).json({errorsMessages: errorsArrPut})
             return
         }
-    }
-    res.sendStatus(404)
 
-})
+        videoPut.title = title
+        videoPut.author = author
+        videoPut.canBeDownloaded = canBeDownloaded
+        videoPut.minAgeRestriction = minAgeRestriction
+        videoPut.publicationDate = publicationDate
+        videoPut.availableResolutions = availableResolutions
+        res.sendStatus(204)
+
+    })
+videosRouter.delete('/:id', (req: Request, res: Response) => {
+
+        for (let i = 0; i < videos.length; i++) {
+            if (videos[i].id === +req.params.id) {
+                videos.splice(i, 1)
+                res.sendStatus(204)
+                return
+            }
+        }
+        res.sendStatus(404)
+
+    })
