@@ -1,5 +1,5 @@
-import {Request, Response, Router} from "express";
-import {VideoType} from "../types";
+import e, {Request, Response, Router} from "express";
+import {Error, VideoType} from "../types";
 
 
 export const videosRouter = Router()
@@ -23,22 +23,17 @@ export const videos: VideoType[] = [
     }
 ]
 
-const errors = (messages: string, fields: string) => {
-    return {
-        errorsMessages: [{
-            message: messages,
-            field: fields,
-        }]
-    }
-
-}
-type Error = {
-    message: string,
-    field: string,
-
-}
+// const errors = (messages: string, fields: string) => {
+//     return {
+//         errorsMessages: [{
+//             message: messages,
+//             field: fields,
+//         }]
+//     }
+// }
+let errorsArr: Error[] = []
 const validateFields = (title: string, author: string, availableResolutions:string[]) => {
-    let errorsArr: Error[] = []
+
     if (!title || !title.trim() || title.length > 40) {
         errorsArr.push({
             message: "Incorrect title",
@@ -108,18 +103,28 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     } = req.body
 
     if (!title || !(typeof (title) === 'string') || !title.trim() || title.length > 40) {
-        res.status(400).json(errors("Incorrect title", "title")
-        )
+        errorsArr.push({
+            message: "Incorrect author",
+            field: "author"
+        })
     }
 
     if (!author || !(typeof (author) === 'string') || !author.trim() || author.length > 20) {
-        res.status(400).json(errors("Incorrect author", "author"))
-
+        errorsArr.push({
+            message: "Incorrect author",
+            field: "author"
+        })
     }
 
     if (!(typeof (minAgeRestriction) === "number") || minAgeRestriction < 1 || minAgeRestriction > 18) {
-        res.status(400).json(errors("Incorrect minAgeRestriction", "minAgeRestriction"))
-        return;
+        errorsArr.push({
+            message: "Incorrect author",
+            field: "author"
+        })
+        return
+    }
+    if(errorsArr.length > 0){
+        res.status(400).json({errorsMessages: errorsArr})
     }
 
     const videoPut = videos.find(p => p.id === +req.params.id)

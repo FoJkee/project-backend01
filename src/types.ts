@@ -9,10 +9,14 @@ export type VideoType = {
     availableResolutions: string[]
 }
 
-export type ErrorType = {
-    errorsMessages: string[]
-}
+// export type ErrorType = {
+//     errorsMessages: string[]
+// }
 
+export type Error = {
+    message: string,
+    field: string,
+}
 
 export enum ETest {}
 
