@@ -1,5 +1,6 @@
 import {Request, Response, Router} from "express";
 import {Error, VideoType} from "../types";
+import {type} from "os";
 
 
 export const videosRouter = Router()
@@ -188,8 +189,17 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
                     field: "availableResolutions"
                 })
             }
-            return
+
         })
+
+    if (!publicationDate || typeof(publicationDate) === "number")  {
+        errorsArrPut.push({
+            message: "Incorrect publicationDate",
+            field: "publicationDate"
+        })
+        return;
+    }
+
 
 
 
