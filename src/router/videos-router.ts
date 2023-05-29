@@ -59,7 +59,7 @@ const validateFieldsPost = (title: string, author: string, availableResolutions:
 }
 
 const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
-                           minAgeRestriction: number, canBeDownloaded: boolean) => {
+                           minAgeRestriction: number, canBeDownloaded: boolean, publicationDate:string) => {
 
     let errorsArrPut: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
@@ -93,6 +93,12 @@ const validateFieldsPut = (title: string, author: string, availableResolutions: 
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
+        })
+    }
+    if (!publicationDate){
+        errorsArrPut.push({
+            message: "Incorrect publicationDate",
+            field: "publicationDate"
         })
     }
     return errorsArrPut
@@ -154,7 +160,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     } = req.body
 
     const a = validateFieldsPut(title, author,
-        availableResolutions, minAgeRestriction, canBeDownloaded)
+        availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
 
 
     if (a.length > 0) {
