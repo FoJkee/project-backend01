@@ -199,7 +199,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (canBeDownloaded === "string" || canBeDownloaded === "number") {
+    if (canBeDownloaded === "string") {
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
