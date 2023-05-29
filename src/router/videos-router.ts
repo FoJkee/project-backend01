@@ -2,6 +2,7 @@ import {Request, Response, Router} from "express";
 import {Error, VideoType} from "../types";
 
 
+
 export const videosRouter = Router()
 
 const getNextDayDate = (dateNow: Date): Date => {
@@ -191,14 +192,14 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
 
     })
 
-    if (!publicationDate || typeof (publicationDate) === "number") {
+    if (!publicationDate || typeof publicationDate === "number") {
         errorsArrPut.push({
             message: "Incorrect publicationDate",
             field: "publicationDate"
         })
     }
 
-    if (!canBeDownloaded) {
+    if (canBeDownloaded === "string" || canBeDownloaded === "number" || canBeDownloaded === undefined) {
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
