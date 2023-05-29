@@ -23,16 +23,6 @@ export const videos: VideoType[] = [
     }
 ]
 
-// const errors = (messages: string, fields: string) => {
-//     return {
-//         errorsMessages: [{
-//             message: messages,
-//             field: fields,
-//         }]
-//     }
-// }
-
-
 const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number) => {
     let errorsArr: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
