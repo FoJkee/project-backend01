@@ -23,8 +23,10 @@ export const videos: VideoType[] = [
     }
 ]
 
-const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number, canBeDownloaded:boolean) => {
-    let errorsArr: Error[] = []
+
+let errorsArr: Error[] = []
+const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number) => {
+
     if (!title || !title.trim() || title.length > 40) {
         errorsArr.push({
             message: "Incorrect title",
@@ -51,12 +53,6 @@ const validateFields = (title: string, author: string, availableResolutions: str
             field: "minAgeRestriction"
         })
     }
-    if(!canBeDownloaded){
-        errorsArr.push({
-            message: "Incorrect canBeDownloaded",
-            field: "canBeDownloaded"
-        })
-    }
 
     return errorsArr
 }
@@ -68,10 +64,10 @@ videosRouter.post('/', (req: Request, res: Response) => {
 
     const postDate = new Date()
 
-    const {title, author, availableResolutions, minAgeRestriction,canBeDownloaded} = req.body
+    const {title, author, availableResolutions, minAgeRestriction} = req.body
 
     const a = validateFields(title, author,
-        availableResolutions, minAgeRestriction,canBeDownloaded)
+        availableResolutions, minAgeRestriction)
 
     if (a.length > 0) {
         res.status(400).json({errorsMessages: a})
@@ -114,12 +110,19 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     } = req.body
 
     const a = validateFields(title, author,
-        availableResolutions, minAgeRestriction, canBeDownloaded)
+        availableResolutions, minAgeRestriction)
 
+    if(!canBeDownloaded){
+        errorsArr.push({
+            message: "Incorrect canBeDownloaded",
+            field: "canBeDownloaded"
+        })
+        return;
+    }
     if (a.length > 0) {
         res.status(400).json({errorsMessages: a})
         return
-    } else {
+    }
         videoPut.title = title
         videoPut.author = author
         videoPut.canBeDownloaded = canBeDownloaded
@@ -127,7 +130,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         videoPut.publicationDate = publicationDate
         videoPut.availableResolutions = availableResolutions
         res.sendStatus(204)
-    }
+
 })
 videosRouter.delete('/:id', (req: Request, res: Response) => {
 
