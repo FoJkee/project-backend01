@@ -24,9 +24,9 @@ export const videos: VideoType[] = [
 ]
 
 
-let errorsArr: Error[] = []
-const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number) => {
 
+const validateFields = (title: string, author: string, availableResolutions: string[], minAgeRestriction: number) => {
+    let errorsArr: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
         errorsArr.push({
             message: "Incorrect title",
@@ -112,13 +112,6 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
     const a = validateFields(title, author,
         availableResolutions, minAgeRestriction)
 
-    if(!canBeDownloaded){
-        errorsArr.push({
-            message: "Incorrect canBeDownloaded",
-            field: "canBeDownloaded"
-        })
-        return;
-    }
     if (a.length > 0) {
         res.status(400).json({errorsMessages: a})
         return
