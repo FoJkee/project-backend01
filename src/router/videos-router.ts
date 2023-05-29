@@ -3,6 +3,7 @@ import {Error, VideoType} from "../types";
 
 
 
+
 export const videosRouter = Router()
 
 const getNextDayDate = (dateNow: Date): Date => {
@@ -23,7 +24,6 @@ export const videos: VideoType[] = [
         availableResolutions: resolutions
     }
 ]
-
 
 const validateFieldsPost = (title: string, author: string, availableResolutions: string[],
                             minAgeRestriction: number) => {
@@ -58,54 +58,6 @@ const validateFieldsPost = (title: string, author: string, availableResolutions:
 
     return errorsArrPost
 }
-
-// const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
-//                            minAgeRestriction: number, canBeDownloaded: boolean,
-//                            publicationDate:string) => {
-//
-//     let errorsArrPut: Error[] = []
-//     if (!title || !title.trim() || title.length > 40) {
-//         errorsArrPut.push({
-//             message: "Incorrect title",
-//             field: "title"
-//         })
-//     }
-//     if (!author || !author.trim() || author.length > 20) {
-//         errorsArrPut.push({
-//             message: "Incorrect author",
-//             field: "author"
-//         })
-//     }
-//     availableResolutions.forEach(el => {
-//         if (!resolutions.some(el1 => el1 === el)) {
-//             errorsArrPut.push({
-//                 message: "Incorrect availableResolutions",
-//                 field: "availableResolutions"
-//             })
-//         }
-//     })
-//     if (minAgeRestriction < 1 || minAgeRestriction > 18) {
-//         errorsArrPut.push({
-//             message: "Incorrect minAgeRestriction",
-//             field: "minAgeRestriction"
-//         })
-//     }
-//
-//     if (typeof (canBeDownloaded) !== "boolean") {
-//         errorsArrPut.push({
-//             message: "Incorrect canBeDownloaded",
-//             field: "canBeDownloaded"
-//         })
-//     }
-//     if (publicationDate){
-//         errorsArrPut.push({
-//             message: "Incorrect publicationDate",
-//             field: "publicationDate"
-//         })
-//     }
-//     return errorsArrPut
-// }
-
 
 videosRouter.get('/', (req: Request, res: Response) => {
     res.status(200).send(videos)
@@ -206,11 +158,6 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
 
     }
-
-
-    // const b = validateFieldsPut(title, author,
-    //     availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
-
 
     if (errorsArrPut.length > 0) {
         res.status(400).json({errorsMessages: errorsArrPut})
