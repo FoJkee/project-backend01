@@ -1,6 +1,5 @@
 import {Request, Response, Router} from "express";
 import {Error, VideoType} from "../types";
-import {type} from "os";
 
 
 export const videosRouter = Router()
@@ -169,71 +168,72 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
             field: "title"
         })
     }
-        if (!author || !(typeof (author) === "string") || !author.trim() || author.length > 20) {
-            errorsArrPut.push({
-                message: "Incorrect author",
-                field: "author"
-            })
-        }
-        if (minAgeRestriction < 1 || minAgeRestriction > 18) {
-            errorsArrPut.push({
-                message: "Incorrect minAgeRestriction",
-                field: "minAgeRestriction"
-            })
-        }
-
-        resolutions.forEach(el => {
-            if (!resolutions.some(el1 => el1 === el)) {
-                errorsArrPut.push({
-                    message: "Incorrect availableResolutions",
-                    field: "availableResolutions"
-                })
-            }
-
+    if (!author || !(typeof (author) === "string") || !author.trim() || author.length > 20) {
+        errorsArrPut.push({
+            message: "Incorrect author",
+            field: "author"
         })
+    }
+    if (minAgeRestriction < 1 || minAgeRestriction > 18) {
+        errorsArrPut.push({
+            message: "Incorrect minAgeRestriction",
+            field: "minAgeRestriction"
+        })
+    }
 
-    if (!publicationDate || typeof(publicationDate) === "number")  {
+    resolutions.forEach(el => {
+        if (!resolutions.some(el1 => el1 === el)) {
+            errorsArrPut.push({
+                message: "Incorrect availableResolutions",
+                field: "availableResolutions"
+            })
+        }
+
+    })
+
+    if (!publicationDate || typeof (publicationDate) === "number") {
         errorsArrPut.push({
             message: "Incorrect publicationDate",
             field: "publicationDate"
         })
-        return;
+    }
+
+    if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
+        errorsArrPut.push({
+            message: "Incorrect canBeDownloaded",
+            field: "canBeDownloaded"
+        })
+        return
     }
 
 
+    // const b = validateFieldsPut(title, author,
+    //     availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
 
 
+    if (errorsArrPut.length > 0) {
+        res.status(400).json({errorsMessages: errorsArrPut})
+        return
+    }
 
+    videoPut.title = title
+    videoPut.author = author
+    videoPut.canBeDownloaded = canBeDownloaded
+    videoPut.minAgeRestriction = minAgeRestriction
+    videoPut.publicationDate = publicationDate
+    videoPut.availableResolutions = availableResolutions
+    res.sendStatus(204)
 
-
-
-        // const b = validateFieldsPut(title, author,
-        //     availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
-
-
-        if (errorsArrPut.length > 0) {
-            res.status(400).json({errorsMessages: errorsArrPut})
-            return
-        }
-
-        videoPut.title = title
-        videoPut.author = author
-        videoPut.canBeDownloaded = canBeDownloaded
-        videoPut.minAgeRestriction = minAgeRestriction
-        videoPut.publicationDate = publicationDate
-        videoPut.availableResolutions = availableResolutions
-        res.sendStatus(204)
-
-    })
+})
 videosRouter.delete('/:id', (req: Request, res: Response) => {
 
-        for (let i = 0; i < videos.length; i++) {
-            if (videos[i].id === +req.params.id) {
-                videos.splice(i, 1)
-                res.sendStatus(204)
-                return
-            }
+    for (let i = 0; i < videos.length; i++) {
+        if (videos[i].id === +req.params.id) {
+            videos.splice(i, 1)
+            res.sendStatus(204)
+            return
         }
-        res.sendStatus(404)
+    }
+    res.sendStatus(404)
 
-    })
+})
