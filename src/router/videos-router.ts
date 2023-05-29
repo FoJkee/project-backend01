@@ -27,75 +27,75 @@ export const videos: VideoType[] = [
 const validateFieldsPost = (title: string, author: string, availableResolutions: string[],
                         minAgeRestriction: number) => {
 
-    let errorsArr: Error[] = []
+    let errorsArrPost: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
-        errorsArr.push({
+        errorsArrPost.push({
             message: "Incorrect title",
             field: "title"
         })
     }
     if (!author || !author.trim() || author.length > 20) {
-        errorsArr.push({
+        errorsArrPost.push({
             message: "Incorrect author",
             field: "author"
         })
     }
     availableResolutions.forEach(el => {
         if (!resolutions.some(el1 => el1 === el)) {
-            errorsArr.push({
+            errorsArrPost.push({
                 message: "Incorrect availableResolutions",
                 field: "availableResolutions"
             })
         }
     })
     if (minAgeRestriction < 1 || minAgeRestriction > 18) {
-        errorsArr.push({
+        errorsArrPost.push({
             message: "Incorrect minAgeRestriction",
             field: "minAgeRestriction"
         })
     }
 
-    return errorsArr
+    return errorsArrPost
 }
 
 const validateFieldsPut = (title: string, author: string, availableResolutions: string[],
-                            minAgeRestriction: number, canBeDownloaded:boolean) => {
+                            minAgeRestriction: number, canBeDownloaded:string) => {
 
-    let errorsArr: Error[] = []
+    let errorsArrPut: Error[] = []
     if (!title || !title.trim() || title.length > 40) {
-        errorsArr.push({
+        errorsArrPut.push({
             message: "Incorrect title",
             field: "title"
         })
     }
     if (!author || !author.trim() || author.length > 20) {
-        errorsArr.push({
+        errorsArrPut.push({
             message: "Incorrect author",
             field: "author"
         })
     }
     availableResolutions.forEach(el => {
         if (!resolutions.some(el1 => el1 === el)) {
-            errorsArr.push({
+            errorsArrPut.push({
                 message: "Incorrect availableResolutions",
                 field: "availableResolutions"
             })
         }
     })
     if (minAgeRestriction < 1 || minAgeRestriction > 18) {
-        errorsArr.push({
+        errorsArrPut.push({
             message: "Incorrect minAgeRestriction",
             field: "minAgeRestriction"
         })
     }
 
-    if(!canBeDownloaded){
-        errorsArr.push({
+    if(canBeDownloaded){
+        errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
         })
     }
-    return errorsArr
+    return errorsArrPut
 }
 
 
