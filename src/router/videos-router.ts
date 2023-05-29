@@ -89,7 +89,7 @@ const validateFieldsPut = (title: string, author: string, availableResolutions: 
         })
     }
 
-    if (typeof (!canBeDownloaded) === "string" || !canBeDownloaded) {
+    if (typeof (canBeDownloaded) !== "boolean") {
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
