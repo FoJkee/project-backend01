@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "project-backend01",
+  "name": "express",
   "builds": [
     {
       "src": "src/index.ts",

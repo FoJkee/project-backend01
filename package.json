@@ -25,7 +25,7 @@
     "dev": "nodemon --inspect dist/index.js",
     "build": "tsc",
     "watch": "tsc -w",
-    "jest": "jest",
+    "jest": "jest -i",
     "start": "node dist/index.js"
   }
 }

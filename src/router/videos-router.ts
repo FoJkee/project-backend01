@@ -1,9 +1,6 @@
 import {Request, Response, Router} from "express";
 import {Error, VideoType} from "../types";
 
-
-
-
 export const videosRouter = Router()
 
 const getNextDayDate = (dateNow: Date): Date => {
@@ -134,7 +131,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
     }
 
-    resolutions.forEach(el => {
+    availableResolutions.forEach((el: string) => {
         if (!resolutions.some(el1 => el1 === el)) {
             errorsArrPut.push({
                 message: "Incorrect availableResolutions",
@@ -151,7 +148,7 @@ videosRouter.put('/:id', (req: Request, res: Response) => {
         })
     }
 
-    if (canBeDownloaded === "string") {
+    if (canBeDownloaded !== "undefined" && typeof canBeDownloaded === "string") {
         errorsArrPut.push({
             message: "Incorrect canBeDownloaded",
             field: "canBeDownloaded"
